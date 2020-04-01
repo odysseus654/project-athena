@@ -24,8 +24,8 @@
 class QJsonObject;
 class QJsonValue;
 
-inline bool isValidScale(glm::vec3 scale) {
-    bool result = scale.x != 0.0f && scale.y != 0.0f && scale.z != 0.0f;
+inline bool isValidScale(glm::dvec3 scale) {
+    bool result = scale.x != 0.0 && scale.y != 0.0 && scale.z != 0.0;
     assert(result);
     return result;
 }
@@ -40,12 +40,12 @@ class Transform {
 public:
     friend QDebug& operator<<(QDebug& debug, const Transform& transform);
     using Pointer = std::shared_ptr<Transform>;
-    typedef glm::mat4 Mat4;
-    typedef glm::mat3 Mat3;
-    typedef glm::vec4 Vec4;
-    typedef glm::vec3 Vec3;
-    typedef glm::vec2 Vec2;
-    typedef glm::quat Quat;
+    typedef glm::dmat4 Mat4;
+    typedef glm::dmat3 Mat3;
+    typedef glm::dvec4 Vec4;
+    typedef glm::dvec3 Vec3;
+    typedef glm::dvec2 Vec2;
+    typedef glm::dquat Quat;
 
     Transform() :
         _rotation(1.0f, 0.0f, 0.0f, 0.0f),
@@ -448,7 +448,7 @@ inline Transform::Mat4& Transform::getRotationScaleMatrixInverse(Mat4& result) c
 
 inline Transform& Transform::evalFromRawMatrix(const Mat4& matrix) {
     // for now works only in the case of TRS transformation
-    if ((matrix[0][3] == 0.0f) && (matrix[1][3] == 0.0f) && (matrix[2][3] == 0.0f) && (matrix[3][3] == 1.0f)) {
+    if ((matrix[0][3] == 0.0) && (matrix[1][3] == 0.0) && (matrix[2][3] == 0.0) && (matrix[3][3] == 1.0)) {
         setTranslation(extractTranslation(matrix));
         evalFromRawMatrix(Mat3(matrix));
     }
@@ -468,9 +468,9 @@ inline Transform& Transform::evalInverse(Transform& inverse) const {
     inverse.setIdentity();
     if (isScaling()) {
         if (isNonUniform()) {
-            inverse.setScale(Vec3(1.0f) / _scale);
+            inverse.setScale(Vec3(1.0) / _scale);
         } else {
-            inverse.setScale(1.0f / _scale.x);
+            inverse.setScale(1.0 / _scale.x);
         }
     }
     if (isRotating()) {

@@ -33,6 +33,7 @@ using glm::mat3;
 using glm::mat4;
 using glm::vec2;
 using glm::vec3;
+using glm::dvec3;
 using glm::vec4;
 using glm::quat;
 
@@ -86,9 +87,9 @@ public:
     static const vec3 UNIT_XZ;
     static const vec3 UNIT_YZ;
     static const vec3 UNIT_XYZ;
-    static const vec3 MAX;
-    static const vec3 MIN;
-    static const vec3 ZERO;
+    static const dvec3 MAX;
+    static const dvec3 MIN;
+    static const dvec3 ZERO;
     static const vec3 ONE;
     static const vec3 TWO;
     static const vec3 HALF;
@@ -151,12 +152,12 @@ glm::quat rotationBetween(const glm::vec3& v1, const glm::vec3& v2);
 
 bool isPointBehindTrianglesPlane(glm::vec3 point, glm::vec3 p0, glm::vec3 p1, glm::vec3 p2);
 
-glm::vec3 extractTranslation(const glm::mat4& matrix);
+glm::dvec3 extractTranslation(const glm::dmat4& matrix);
 
-void setTranslation(glm::mat4& matrix, const glm::vec3& translation);
+void setTranslation(glm::dmat4& matrix, const glm::dvec3& translation);
 
-glm::quat extractRotation(const glm::mat4& matrix, bool assumeOrthogonal = false);
-glm::quat glmExtractRotation(const glm::mat4& matrix);
+glm::dquat extractRotation(const glm::dmat4& matrix, bool assumeOrthogonal = false);
+glm::dquat glmExtractRotation(const glm::dmat4& matrix);
 
 glm::vec3 extractScale(const glm::mat4& matrix);
 

@@ -399,6 +399,17 @@ bool OctreePacketData::appendValue(const glm::vec3& value) {
     return success;
 }
 
+bool OctreePacketData::appendValue(const glm::dvec3& value) {
+    const unsigned char* data = (const unsigned char*)&value;
+    int length = sizeof(glm::dvec3);
+    bool success = append(data, length);
+    if (success) {
+        _bytesOfValues += length;
+        _totalBytesOfValues += length;
+    }
+    return success;
+}
+
 bool OctreePacketData::appendValue(const glm::u8vec3& color) {
     return appendColor(color.x, color.y, color.z);
 }
@@ -694,6 +705,11 @@ int OctreePacketData::unpackDataFromBytes(const unsigned char* dataBytes, glm::v
 }
 
 int OctreePacketData::unpackDataFromBytes(const unsigned char* dataBytes, glm::vec3& result) {
+    memcpy(&result, dataBytes, sizeof(result));
+    return sizeof(result);
+}
+
+int OctreePacketData::unpackDataFromBytes(const unsigned char* dataBytes, glm::dvec3& result) {
     memcpy(&result, dataBytes, sizeof(result));
     return sizeof(result);
 }

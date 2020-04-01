@@ -199,12 +199,12 @@ public:
     void setDescription(const QString& value);
 
     /// Dimensions in meters (0.0 - TREE_SCALE)
-    virtual glm::vec3 getScaledDimensions() const;
-    virtual void setScaledDimensions(const glm::vec3& value);
-    virtual glm::vec3 getRaycastDimensions() const { return getScaledDimensions(); }
+    virtual glm::dvec3 getScaledDimensions() const;
+    virtual void setScaledDimensions(const glm::dvec3& value);
+    virtual glm::dvec3 getRaycastDimensions() const { return getScaledDimensions(); }
 
-    glm::vec3 getUnscaledDimensions() const;
-    virtual void setUnscaledDimensions(const glm::vec3& value);
+    glm::dvec3 getUnscaledDimensions() const;
+    virtual void setUnscaledDimensions(const glm::dvec3& value);
 
     void setDensity(float density);
     float computeMass() const;
@@ -271,9 +271,9 @@ public:
     QString getCollisionSoundURL() const;
     void setCollisionSoundURL(const QString& value);
 
-    glm::vec3 getRegistrationPoint() const; /// registration point as ratio of entity
+    glm::dvec3 getRegistrationPoint() const; /// registration point as ratio of entity
     /// registration point as ratio of entity
-    virtual void setRegistrationPoint(const glm::vec3& value); // FIXME: this is suspicious!
+    virtual void setRegistrationPoint(const glm::dvec3& value); // FIXME: this is suspicious!
 
     bool hasAngularVelocity() const { return getWorldAngularVelocity() != ENTITY_ITEM_ZERO_VEC3; }
     bool hasLocalAngularVelocity() const { return getLocalAngularVelocity() != ENTITY_ITEM_ZERO_VEC3; }
@@ -411,7 +411,7 @@ public:
     /// return preferred shape type (actual physical shape may differ)
     virtual ShapeType getShapeType() const { return SHAPE_TYPE_NONE; }
 
-    void setPosition(const glm::vec3& value);
+    void setPosition(const glm::dvec3& value);
     virtual void setParentID(const QUuid& parentID) override;
     virtual void setShapeType(ShapeType type) { /* do nothing */ }
 
@@ -640,7 +640,7 @@ protected:
     quint64 _loadedScriptTimestamp { ENTITY_ITEM_DEFAULT_SCRIPT_TIMESTAMP + 1 };
 
     QString _collisionSoundURL { ENTITY_ITEM_DEFAULT_COLLISION_SOUND_URL };
-    glm::vec3 _registrationPoint { ENTITY_ITEM_DEFAULT_REGISTRATION_POINT };
+    glm::dvec3 _registrationPoint { ENTITY_ITEM_DEFAULT_REGISTRATION_POINT };
     float _angularDamping { ENTITY_ITEM_DEFAULT_ANGULAR_DAMPING };
     bool _visible { ENTITY_ITEM_DEFAULT_VISIBLE };
     bool _isVisibleInSecondaryCamera { ENTITY_ITEM_DEFAULT_VISIBLE_IN_SECONDARY_CAMERA };
@@ -725,7 +725,7 @@ protected:
 
     // physics related changes from the network to suppress any duplicates and make
     // sure redundant applications are idempotent
-    glm::vec3 _lastUpdatedPositionValue;
+    glm::dvec3 _lastUpdatedPositionValue;
     glm::quat _lastUpdatedRotationValue;
     glm::vec3 _lastUpdatedVelocityValue;
     glm::vec3 _lastUpdatedAngularVelocityValue;

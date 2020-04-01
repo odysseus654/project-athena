@@ -836,16 +836,16 @@ int EntityItem::readEntityDataFromBuffer(const unsigned char* data, int bytesLef
 
         // Note: duplicate packets are expected and not wrong. They may be sent for any number of
         // reasons and the contract is that the client handles them in an idempotent manner.
-        auto customUpdatePositionFromNetwork = [this, shouldUpdate, lastEdited](glm::vec3 value) {
+        auto customUpdatePositionFromNetwork = [this, shouldUpdate, lastEdited](glm::dvec3 value) {
             if (shouldUpdate(_lastUpdatedPositionTimestamp, value != _lastUpdatedPositionValue)) {
                 setPosition(value);
                 _lastUpdatedPositionTimestamp = lastEdited;
                 _lastUpdatedPositionValue = value;
             }
         };
-        READ_ENTITY_PROPERTY(PROP_POSITION, glm::vec3, customUpdatePositionFromNetwork);
+        READ_ENTITY_PROPERTY(PROP_POSITION, glm::dvec3, customUpdatePositionFromNetwork);
     }
-    READ_ENTITY_PROPERTY(PROP_DIMENSIONS, glm::vec3, setScaledDimensions);
+    READ_ENTITY_PROPERTY(PROP_DIMENSIONS, glm::dvec3, setScaledDimensions);
     {   // See comment above
         auto customUpdateRotationFromNetwork = [this, shouldUpdate, lastEdited](glm::quat value) {
             if (shouldUpdate(_lastUpdatedRotationTimestamp, value != _lastUpdatedRotationValue)) {
@@ -856,7 +856,7 @@ int EntityItem::readEntityDataFromBuffer(const unsigned char* data, int bytesLef
         };
         READ_ENTITY_PROPERTY(PROP_ROTATION, glm::quat, customUpdateRotationFromNetwork);
     }
-    READ_ENTITY_PROPERTY(PROP_REGISTRATION_POINT, glm::vec3, setRegistrationPoint);
+    READ_ENTITY_PROPERTY(PROP_REGISTRATION_POINT, glm::dvec3, setRegistrationPoint);
     READ_ENTITY_PROPERTY(PROP_CREATED, quint64, setCreated);
     READ_ENTITY_PROPERTY(PROP_LAST_EDITED_BY, QUuid, setLastEditedBy);
     // READ_ENTITY_PROPERTY(PROP_ENTITY_HOST_TYPE, entity::HostType, setEntityHostType); // not sent over the wire
@@ -1036,7 +1036,7 @@ void EntityItem::adjustEditPacketForClockSkew(QByteArray& buffer, qint64 clockSk
 }
 
 float EntityItem::computeMass() const {
-    glm::vec3 dimensions = getScaledDimensions();
+    glm::dvec3 dimensions = getScaledDimensions();
     return getDensity() * _volumeMultiplier * dimensions.x * dimensions.y * dimensions.z;
 }
 
@@ -1055,7 +1055,7 @@ void EntityItem::setMass(float mass) {
     // we must protect the density range to help maintain stability of physics simulation
     // therefore this method might not accept the mass that is supplied.
 
-    glm::vec3 dimensions = getScaledDimensions();
+    glm::dvec3 dimensions = getScaledDimensions();
     float volume = _volumeMultiplier * dimensions.x * dimensions.y * dimensions.z;
 
     // compute new density
@@ -1213,7 +1213,7 @@ bool EntityItem::stepKinematicMotion(float timeElapsed) {
         }
     }
 
-    glm::vec3 position = transform.getTranslation();
+    glm::dvec3 position = transform.getTranslation();
     const float MIN_KINEMATIC_LINEAR_SPEED_SQUARED =
         KINEMATIC_LINEAR_SPEED_THRESHOLD * KINEMATIC_LINEAR_SPEED_THRESHOLD;
     if (isTranslating) {
@@ -1234,7 +1234,7 @@ bool EntityItem::stepKinematicMotion(float timeElapsed) {
             bool success;
             Transform parentTransform = getParentTransform(success);
             if (success) {
-                linearAcceleration = glm::inverse(parentTransform.getRotation()) * linearAcceleration;
+                linearAcceleration = glm::inverse(parentTransform.getRotation()) * glm::dvec3(linearAcceleration);
             }
             deltaVelocity += linearAcceleration * timeElapsed;
 
@@ -1603,8 +1603,8 @@ void EntityItem::recordCreationTime() {
 
 const Transform EntityItem::getTransformToCenter(bool& success) const {
     Transform result = getTransform(success);
-    if (getRegistrationPoint() != ENTITY_ITEM_HALF_VEC3) { // If it is not already centered, translate to center
-        result.postTranslate((ENTITY_ITEM_HALF_VEC3 - getRegistrationPoint()) * getScaledDimensions()); // Position to center
+    if (getRegistrationPoint() != ENTITY_ITEM_HALF_DVEC3) { // If it is not already centered, translate to center
+        result.postTranslate((ENTITY_ITEM_HALF_DVEC3 - getRegistrationPoint()) * getScaledDimensions()); // Position to center
     }
     return result;
 }
@@ -1620,7 +1620,7 @@ AACube EntityItem::getMaximumAACube(bool& success) const {
             // we want to compute the furthestExtent that an entity can extend out from its "position"
             // to do this we compute the max of these two vec3s: registration and 1-registration
             // and then scale by dimensions
-            glm::vec3 maxExtents = getScaledDimensions() * glm::max(_registrationPoint, glm::vec3(1.0f) - _registrationPoint);
+            glm::vec3 maxExtents = getScaledDimensions() * glm::max(_registrationPoint, glm::dvec3(1.0) - _registrationPoint);
 
             // there exists a sphere that contains maxExtents for all rotations
             float radius = glm::length(maxExtents);
@@ -1645,9 +1645,9 @@ AACube EntityItem::getMinimumAACube(bool& success) const {
         glm::vec3 position = getWorldPosition(success);
         if (success) {
             _recalcMinAACube = false;
-            glm::vec3 dimensions = getScaledDimensions();
-            glm::vec3 unrotatedMinRelativeToEntity = - (dimensions * _registrationPoint);
-            glm::vec3 unrotatedMaxRelativeToEntity = dimensions * (glm::vec3(1.0f, 1.0f, 1.0f) - _registrationPoint);
+            glm::dvec3 dimensions = getScaledDimensions();
+            glm::dvec3 unrotatedMinRelativeToEntity = - (dimensions * _registrationPoint);
+            glm::dvec3 unrotatedMaxRelativeToEntity = dimensions * (glm::dvec3(1.0, 1.0, 1.0) - _registrationPoint);
             Extents extents = { unrotatedMinRelativeToEntity, unrotatedMaxRelativeToEntity };
             extents.rotate(getWorldOrientation());
 
@@ -1675,9 +1675,9 @@ AABox EntityItem::getAABox(bool& success) const {
         glm::vec3 position = getWorldPosition(success);
         if (success) {
             _recalcAABox = false;
-            glm::vec3 dimensions = getScaledDimensions();
-            glm::vec3 unrotatedMinRelativeToEntity = - (dimensions * _registrationPoint);
-            glm::vec3 unrotatedMaxRelativeToEntity = dimensions * (glm::vec3(1.0f, 1.0f, 1.0f) - _registrationPoint);
+            glm::dvec3 dimensions = getScaledDimensions();
+            glm::dvec3 unrotatedMinRelativeToEntity = - (dimensions * _registrationPoint);
+            glm::dvec3 unrotatedMaxRelativeToEntity = dimensions * (glm::dvec3(1.0, 1.0, 1.0) - _registrationPoint);
             Extents extents = { unrotatedMinRelativeToEntity, unrotatedMaxRelativeToEntity };
             extents.rotate(getWorldOrientation());
 
@@ -1720,9 +1720,9 @@ float EntityItem::getRadius() const {
 
 void EntityItem::adjustShapeInfoByRegistration(ShapeInfo& info) const {
     if (_registrationPoint != ENTITY_ITEM_DEFAULT_REGISTRATION_POINT) {
-        glm::mat4 scale = glm::scale(getScaledDimensions());
-        glm::mat4 registration = scale * glm::translate(ENTITY_ITEM_DEFAULT_REGISTRATION_POINT - getRegistrationPoint());
-        glm::vec3 regTransVec = glm::vec3(registration[3]); // extract position component from matrix
+        glm::dmat4 scale = glm::scale(getScaledDimensions());
+        glm::dmat4 registration = scale * glm::translate(ENTITY_ITEM_DEFAULT_REGISTRATION_POINT - getRegistrationPoint());
+        glm::dvec3 regTransVec = glm::dvec3(registration[3]); // extract position component from matrix
         info.setOffset(regTransVec);
     }
 }
@@ -1734,9 +1734,9 @@ bool EntityItem::contains(const glm::vec3& point) const {
         // SPHERE case is special:
         // anything with shapeType == SPHERE must collide as a bounding sphere in the world-frame regardless of dimensions
         // therefore we must do math using an unscaled localPoint relative to sphere center
-        glm::vec3 dimensions = getScaledDimensions();
-        glm::vec3 localPoint = point - (getWorldPosition() + getWorldOrientation() * (dimensions * (ENTITY_ITEM_DEFAULT_REGISTRATION_POINT - getRegistrationPoint())));
-        const float HALF_SQUARED = 0.25f;
+        glm::dvec3 dimensions = getScaledDimensions();
+        glm::dvec3 localPoint = point - (getWorldPosition() + getWorldOrientation() * (dimensions * (ENTITY_ITEM_DEFAULT_REGISTRATION_POINT - getRegistrationPoint())));
+        const double HALF_SQUARED = 0.25;
         return glm::length2(localPoint) < HALF_SQUARED * glm::length2(dimensions);
     }
 
@@ -1783,7 +1783,7 @@ bool EntityItem::contains(const glm::vec3& point) const {
 }
 
 void EntityItem::computeShapeInfo(ShapeInfo& info) {
-    info.setParams(getShapeType(), 0.5f * getScaledDimensions());
+    info.setParams(getShapeType(), 0.5 * getScaledDimensions());
     adjustShapeInfoByRegistration(info);
 }
 
@@ -1792,18 +1792,18 @@ float EntityItem::getVolumeEstimate() const {
     return dimensions.x * dimensions.y * dimensions.z;
 }
 
-void EntityItem::setRegistrationPoint(const glm::vec3& value) {
+void EntityItem::setRegistrationPoint(const glm::dvec3& value) {
     if (value != _registrationPoint) {
         withWriteLock([&] {
-            _registrationPoint = glm::clamp(value, glm::vec3(ENTITY_ITEM_MIN_REGISTRATION_POINT), 
-                                                   glm::vec3(ENTITY_ITEM_MAX_REGISTRATION_POINT));
+            _registrationPoint = glm::clamp(value, glm::dvec3(ENTITY_ITEM_MIN_REGISTRATION_POINT), 
+                                                   glm::dvec3(ENTITY_ITEM_MAX_REGISTRATION_POINT));
         });
         dimensionsChanged(); // Registration Point affects the bounding box
         markDirtyFlags(Simulation::DIRTY_SHAPE);
     }
 }
 
-void EntityItem::setPosition(const glm::vec3& value) {
+void EntityItem::setPosition(const glm::dvec3& value) {
     if (getLocalPosition() != value) {
         setLocalPosition(value);
 
@@ -1890,19 +1890,19 @@ void EntityItem::setParentID(const QUuid& value) {
     }
 }
 
-glm::vec3 EntityItem::getScaledDimensions() const {
-    glm::vec3 scale = getSNScale();
+glm::dvec3 EntityItem::getScaledDimensions() const {
+    glm::dvec3 scale = getSNScale();
     return getUnscaledDimensions() * scale;
 }
 
-void EntityItem::setScaledDimensions(const glm::vec3& value) {
-    glm::vec3 parentScale = getSNScale();
+void EntityItem::setScaledDimensions(const glm::dvec3& value) {
+    glm::dvec3 parentScale = getSNScale();
     setUnscaledDimensions(value / parentScale);
 }
 
-void EntityItem::setUnscaledDimensions(const glm::vec3& value) {
-    glm::vec3 newDimensions = glm::max(value, glm::vec3(ENTITY_ITEM_MIN_DIMENSION));
-    const float MIN_SCALE_CHANGE_SQUARED = 1.0e-6f;
+void EntityItem::setUnscaledDimensions(const glm::dvec3& value) {
+    glm::dvec3 newDimensions = glm::max(value, glm::dvec3(ENTITY_ITEM_MIN_DIMENSION));
+    const double MIN_SCALE_CHANGE_SQUARED = 1.0e-6f;
     if (glm::length2(getUnscaledDimensions() - newDimensions) > MIN_SCALE_CHANGE_SQUARED) {
         withWriteLock([&] {
             _unscaledDimensions = newDimensions;
@@ -1916,8 +1916,8 @@ void EntityItem::setUnscaledDimensions(const glm::vec3& value) {
     }
 }
 
-glm::vec3 EntityItem::getUnscaledDimensions() const {
-   return resultWithReadLock<glm::vec3>([&] {
+glm::dvec3 EntityItem::getUnscaledDimensions() const {
+   return resultWithReadLock<glm::dvec3>([&] {
         return _unscaledDimensions;
     });
 }
@@ -2886,7 +2886,7 @@ QString EntityItem::getCollisionSoundURL() const {
     return result;
 }
 
-glm::vec3 EntityItem::getRegistrationPoint() const {
+glm::dvec3 EntityItem::getRegistrationPoint() const {
     glm::vec3 result;
     withReadLock([&] {
         result = _registrationPoint;

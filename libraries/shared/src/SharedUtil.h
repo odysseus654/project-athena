@@ -180,6 +180,7 @@ inline bool isBetween(int64_t value, int64_t max, int64_t min) { return ((value 
 
 /// \return bool is the float NaN
 inline bool isNaN(float value) { return value != value; }
+inline bool isNaN(double value) { return value != value; }
 
 QString formatUsecTime(float usecs);
 QString formatUsecTime(double usecs);

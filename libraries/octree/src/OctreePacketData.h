@@ -171,6 +171,9 @@ public:
     /// appends a non-position vector to the end of the stream, may fail if new data stream is too long to fit in packet
     bool appendValue(const glm::vec3& value);
 
+    /// appends a non-position vector to the end of the stream, may fail if new data stream is too long to fit in packet
+    bool appendValue(const glm::dvec3& value);
+
     /// appends a color to the end of the stream, may fail if new data stream is too long to fit in packet
     bool appendValue(const glm::u8vec3& value);
 
@@ -277,6 +280,7 @@ public:
     static int unpackDataFromBytes(const unsigned char* dataBytes, TextEffect& result) { memcpy(&result, dataBytes, sizeof(result)); return sizeof(result); }
     static int unpackDataFromBytes(const unsigned char* dataBytes, glm::vec2& result);
     static int unpackDataFromBytes(const unsigned char* dataBytes, glm::vec3& result);
+    static int unpackDataFromBytes(const unsigned char* dataBytes, glm::dvec3& result);
     static int unpackDataFromBytes(const unsigned char* dataBytes, glm::u8vec3& result);
     static int unpackDataFromBytes(const unsigned char* dataBytes, QString& result);
     static int unpackDataFromBytes(const unsigned char* dataBytes, QUuid& result);

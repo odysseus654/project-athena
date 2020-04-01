@@ -24,14 +24,14 @@
 #include "GLMHelpers.h"
 #include "Plane.h"
 
-glm::vec3 computeVectorFromPointToSegment(const glm::vec3& point, const glm::vec3& start, const glm::vec3& end) {
+glm::dvec3 computeVectorFromPointToSegment(const glm::dvec3& point, const glm::dvec3& start, const glm::dvec3& end) {
     // compute the projection of the point vector onto the segment vector
-    glm::vec3 segmentVector = end - start;
-    float lengthSquared = glm::dot(segmentVector, segmentVector);
+    glm::dvec3 segmentVector = end - start;
+    double lengthSquared = glm::dot(segmentVector, segmentVector);
     if (lengthSquared < EPSILON) {
         return start - point; // start and end the same
     }
-    float proj = glm::dot(point - start, segmentVector) / lengthSquared;
+    double proj = glm::dot(point - start, segmentVector) / lengthSquared;
     if (proj <= 0.0f) { // closest to the start
         return start - point;
 
@@ -215,8 +215,8 @@ bool findInsideOutIntersection(float origin, float direction, float corner, floa
 }
 
 // https://tavianator.com/fast-branchless-raybounding-box-intersections/
-bool findRayAABoxIntersection(const glm::vec3& origin, const glm::vec3& direction, const glm::vec3& invDirection,
-                              const glm::vec3& corner, const glm::vec3& scale, float& distance, BoxFace& face, glm::vec3& surfaceNormal) {
+bool findRayAABoxIntersection(const glm::dvec3& origin, const glm::vec3& direction, const glm::vec3& invDirection,
+                              const glm::dvec3& corner, const glm::vec3& scale, double& distance, BoxFace& face, glm::vec3& surfaceNormal) {
     float t1, t2, newTmin, newTmax, tmin = -INFINITY, tmax = INFINITY;
     int minAxis = -1, maxAxis = -1;
 
@@ -820,7 +820,7 @@ bool isWithin(float value, float corner, float size) {
     return value >= corner && value <= corner + size;
 }
 
-bool aaBoxContains(const glm::vec3& point, const glm::vec3& corner, const glm::vec3& scale) {
+bool aaBoxContains(const glm::dvec3& point, const glm::dvec3& corner, const glm::vec3& scale) {
     return isWithin(point.x, corner.x, scale.x) &&
         isWithin(point.y, corner.y, scale.y) &&
         isWithin(point.z, corner.z, scale.z);
@@ -1096,8 +1096,8 @@ inline float parabolaVelocityAtT(float velocity, float acceleration, float t) {
     return velocity + acceleration * t;
 }
 
-bool findParabolaAABoxIntersection(const glm::vec3& origin, const glm::vec3& velocity, const glm::vec3& acceleration,
-                                   const glm::vec3& corner, const glm::vec3& scale, float& parabolicDistance, BoxFace& face, glm::vec3& surfaceNormal) {
+bool findParabolaAABoxIntersection(const glm::dvec3& origin, const glm::vec3& velocity, const glm::vec3& acceleration,
+                                   const glm::dvec3& corner, const glm::vec3& scale, double& parabolicDistance, BoxFace& face, glm::vec3& surfaceNormal) {
     float minDistance = FLT_MAX;
     BoxFace minFace = UNKNOWN_FACE;
     glm::vec3 minNormal;

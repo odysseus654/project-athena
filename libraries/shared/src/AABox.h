@@ -32,62 +32,62 @@ class AABox {
 public:
     AABox(const AACube& other);
     AABox(const Extents& other);
-    AABox(const glm::vec3& corner, float size);
-    AABox(const glm::vec3& corner, const glm::vec3& dimensions);
+    AABox(const glm::dvec3& corner, double size);
+    AABox(const glm::dvec3& corner, const glm::dvec3& dimensions);
     AABox();
     ~AABox() {};
 
-    void setBox(const glm::vec3& corner, const glm::vec3& scale);
+    void setBox(const glm::dvec3& corner, const glm::vec3& scale);
 
-    void setBox(const glm::vec3& corner, float scale);
-    glm::vec3 getFarthestVertex(const glm::vec3& normal) const; // return vertex most parallel to normal
-    glm::vec3 getNearestVertex(const glm::vec3& normal) const; // return vertex most anti-parallel to normal
+    void setBox(const glm::dvec3& corner, float scale);
+    glm::dvec3 getFarthestVertex(const glm::vec3& normal) const; // return vertex most parallel to normal
+    glm::dvec3 getNearestVertex(const glm::vec3& normal) const; // return vertex most anti-parallel to normal
 
-    const glm::vec3& getCorner() const { return _corner; }
+    const glm::dvec3& getCorner() const { return _corner; }
     const glm::vec3& getScale() const { return _scale; }
     const glm::vec3& getDimensions() const { return _scale; }
     float getLargestDimension() const { return glm::max(_scale.x, glm::max(_scale.y, _scale.z)); }
 
     glm::vec3 calcCenter() const;
-    glm::vec3 calcTopFarLeft() const { return _corner + _scale; }
+    glm::dvec3 calcTopFarLeft() const { return _corner + glm::dvec3(_scale); }
 
-    const glm::vec3& getMinimum() const { return _corner; }
-    glm::vec3 getMaximum() const { return _corner + _scale; }
+    const glm::dvec3& getMinimum() const { return _corner; }
+    glm::dvec3 getMaximum() const { return _corner + glm::dvec3(_scale); }
 
-    glm::vec3 getVertex(BoxVertex vertex) const;
+    glm::dvec3 getVertex(BoxVertex vertex) const;
 
-    const glm::vec3& getMinimumPoint() const { return _corner; }
-    glm::vec3 getMaximumPoint() const { return calcTopFarLeft(); }
+    const glm::dvec3& getMinimumPoint() const { return _corner; }
+    glm::dvec3 getMaximumPoint() const { return calcTopFarLeft(); }
 
     bool contains(const Triangle& triangle) const;
-    bool contains(const glm::vec3& point) const;
+    bool contains(const glm::dvec3& point) const;
     bool contains(const AABox& otherBox) const;
     bool touches(const AABox& otherBox) const;
 
     bool contains(const AACube& otherCube) const;
     bool touches(const AACube& otherCube) const;
 
-    bool expandedContains(const glm::vec3& point, float expansion) const;
-    bool expandedIntersectsSegment(const glm::vec3& start, const glm::vec3& end, float expansion) const;
-    bool findRayIntersection(const glm::vec3& origin, const glm::vec3& direction, const glm::vec3& invDirection, float& distance,
+    bool expandedContains(const glm::dvec3& point, double expansion) const;
+    bool expandedIntersectsSegment(const glm::dvec3& start, const glm::dvec3& end, double expansion) const;
+    bool findRayIntersection(const glm::dvec3& origin, const glm::vec3& direction, const glm::vec3& invDirection, double& distance,
                              BoxFace& face, glm::vec3& surfaceNormal) const;
-    bool findParabolaIntersection(const glm::vec3& origin, const glm::vec3& velocity, const glm::vec3& acceleration,
-                                  float& parabolicDistance, BoxFace& face, glm::vec3& surfaceNormal) const;
+    bool findParabolaIntersection(const glm::dvec3& origin, const glm::vec3& velocity, const glm::vec3& acceleration,
+                                  double& parabolicDistance, BoxFace& face, glm::vec3& surfaceNormal) const;
     bool rayHitsBoundingSphere(const glm::vec3& origin, const glm::vec3& direction) const;
     bool parabolaPlaneIntersectsBoundingSphere(const glm::vec3& origin, const glm::vec3& velocity, const glm::vec3& acceleration, const glm::vec3& normal) const;
-    bool touchesSphere(const glm::vec3& center, float radius) const; // fast but may generate false positives
-    bool touchesAAEllipsoid(const glm::vec3& center, const glm::vec3& radials) const;
-    bool findSpherePenetration(const glm::vec3& center, float radius, glm::vec3& penetration) const;
-    bool findCapsulePenetration(const glm::vec3& start, const glm::vec3& end, float radius, glm::vec3& penetration) const;
+    bool touchesSphere(const glm::dvec3& center, double radius) const; // fast but may generate false positives
+    bool touchesAAEllipsoid(const glm::dvec3& center, const glm::dvec3& radials) const;
+    bool findSpherePenetration(const glm::dvec3& center, double radius, glm::vec3& penetration) const;
+    bool findCapsulePenetration(const glm::dvec3& start, const glm::dvec3& end, double radius, glm::vec3& penetration) const;
 
     bool isNull() const { return _scale == glm::vec3(0.0f, 0.0f, 0.0f); }
 
-    AABox clamp(const glm::vec3& min, const glm::vec3& max) const;
-    AABox clamp(float min, float max) const;
+    AABox clamp(const glm::dvec3& min, const glm::dvec3& max) const;
+    AABox clamp(double min, double max) const;
 
-    inline AABox& operator+=(const glm::vec3& point) {
+    inline AABox& operator+=(const glm::dvec3& point) {
         bool valid = !isInvalid();
-        glm::vec3 maximum = glm::max(_corner + _scale, point);
+        glm::dvec3 maximum = glm::max(_corner + glm::dvec3(_scale), point);
         _corner = glm::min(_corner, point);
         if (valid) {
             _scale = maximum - _corner;
@@ -149,15 +149,15 @@ public:
     glm::vec4 getPlane(BoxFace face) const;
 
 private:
-    glm::vec3 getClosestPointOnFace(const glm::vec3& point, BoxFace face) const;
-    glm::vec3 getClosestPointOnFace(const glm::vec4& origin, const glm::vec4& direction, BoxFace face) const;
+    glm::dvec3 getClosestPointOnFace(const glm::dvec3& point, BoxFace face) const;
+    glm::dvec3 getClosestPointOnFace(const glm::dvec4& origin, const glm::vec4& direction, BoxFace face) const;
 
     static BoxFace getOppositeFace(BoxFace face);
 
     void checkPossibleParabolicIntersection(float t, int i, float& minDistance,
         const glm::vec3& origin, const glm::vec3& velocity, const glm::vec3& acceleration, bool& hit) const;
 
-    glm::vec3 _corner;
+    glm::dvec3 _corner;
     glm::vec3 _scale;
 };
 

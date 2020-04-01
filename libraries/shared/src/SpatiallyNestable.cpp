@@ -282,7 +282,7 @@ glm::vec3 SpatiallyNestable::worldToLocalVelocity(const glm::vec3& velocity, con
         return velocity;
     }
 
-    return glm::inverse(parentTransform.getRotation()) * (velocity - parentVelocity);
+    return glm::inverse(parentTransform.getRotation()) * glm::dvec3(velocity - parentVelocity);
 }
 
 glm::vec3 SpatiallyNestable::worldToLocalAngularVelocity(const glm::vec3& angularVelocity, const QUuid& parentID,
@@ -299,7 +299,7 @@ glm::vec3 SpatiallyNestable::worldToLocalAngularVelocity(const glm::vec3& angula
         parentTransform.setScale(parent->scaleForChildren());
     }
 
-    return glm::inverse(parentTransform.getRotation()) * angularVelocity;
+    return glm::inverse(parentTransform.getRotation()) * glm::dvec3(angularVelocity);
 }
 
 
@@ -434,7 +434,7 @@ glm::vec3 SpatiallyNestable::localToWorldVelocity(const glm::vec3& velocity, con
         return velocity;
     }
 
-    return parentVelocity + parentTransform.getRotation() * velocity;
+    return glm::dvec3(parentVelocity) + parentTransform.getRotation() * glm::dvec3(velocity);
 }
 
 glm::vec3 SpatiallyNestable::localToWorldAngularVelocity(const glm::vec3& angularVelocity, const QUuid& parentID,
@@ -450,7 +450,7 @@ glm::vec3 SpatiallyNestable::localToWorldAngularVelocity(const glm::vec3& angula
     if (scalesWithParent) {
         parentTransform.setScale(parent->scaleForChildren());
     }
-    return parentTransform.getRotation() * angularVelocity;
+    return parentTransform.getRotation() * glm::dvec3(angularVelocity);
 }
 
 
@@ -488,7 +488,7 @@ glm::vec3 SpatiallyNestable::localToWorldDimensions(const glm::vec3& dimensions,
     return dimensions;
 }
 
-void SpatiallyNestable::setWorldTransform(const glm::vec3& position, const glm::quat& orientation) {
+void SpatiallyNestable::setWorldTransform(const glm::dvec3& position, const glm::dquat& orientation) {
     // guard against introducing NaN into the transform
     if (isNaN(orientation) || isNaN(position)) {
         return;
@@ -535,11 +535,11 @@ glm::vec3 SpatiallyNestable::getWorldPosition() const {
     return result;
 }
 
-glm::vec3 SpatiallyNestable::getJointWorldPosition(int jointIndex, bool& success) const {
+glm::dvec3 SpatiallyNestable::getJointWorldPosition(int jointIndex, bool& success) const {
     return getJointTransform(jointIndex, success).getTranslation();
 }
 
-void SpatiallyNestable::setWorldPosition(const glm::vec3& position, bool& success, bool tellPhysics) {
+void SpatiallyNestable::setWorldPosition(const glm::dvec3& position, bool& success, bool tellPhysics) {
     // guard against introducing NaN into the transform
     if (isNaN(position)) {
         success = false;
@@ -563,7 +563,7 @@ void SpatiallyNestable::setWorldPosition(const glm::vec3& position, bool& succes
     }
 }
 
-void SpatiallyNestable::setWorldPosition(const glm::vec3& position) {
+void SpatiallyNestable::setWorldPosition(const glm::dvec3& position) {
     bool success;
     setWorldPosition(position, success);
     #ifdef WANT_DEBUG
@@ -592,7 +592,7 @@ glm::quat SpatiallyNestable::getWorldOrientation(int jointIndex, bool& success) 
     return getJointTransform(jointIndex, success).getRotation();
 }
 
-void SpatiallyNestable::setWorldOrientation(const glm::quat& orientation, bool& success, bool tellPhysics) {
+void SpatiallyNestable::setWorldOrientation(const glm::dquat& orientation, bool& success, bool tellPhysics) {
     // guard against introducing NaN into the transform
     if (isNaN(orientation)) {
         success = false;
@@ -616,7 +616,7 @@ void SpatiallyNestable::setWorldOrientation(const glm::quat& orientation, bool& 
     }
 }
 
-void SpatiallyNestable::setWorldOrientation(const glm::quat& orientation) {
+void SpatiallyNestable::setWorldOrientation(const glm::dquat& orientation) {
     bool success;
     setWorldOrientation(orientation, success);
     #ifdef WANT_DEBUG
@@ -638,7 +638,7 @@ glm::vec3 SpatiallyNestable::getWorldVelocity(bool& success) const {
     }
     _velocityLock.withReadLock([&] {
         // TODO: take parent angularVelocity into account.
-        result = parentVelocity + parentTransform.getRotation() * _velocity;
+        result = glm::dvec3(parentVelocity) + parentTransform.getRotation() * glm::dvec3(_velocity);
     });
     return result;
 }
@@ -666,7 +666,7 @@ void SpatiallyNestable::setWorldVelocity(const glm::vec3& velocity, bool& succes
             _velocity = velocity;
         } else {
             // TODO: take parent angularVelocity into account.
-            _velocity = glm::inverse(parentTransform.getRotation()) * (velocity - parentVelocity);
+            _velocity = glm::inverse(parentTransform.getRotation()) * glm::dvec3(velocity - parentVelocity);
         }
     });
 }
@@ -702,7 +702,7 @@ glm::vec3 SpatiallyNestable::getWorldAngularVelocity(bool& success) const {
         return result;
     }
     _angularVelocityLock.withReadLock([&] {
-        result = parentAngularVelocity + parentTransform.getRotation() * _angularVelocity;
+        result = glm::dvec3(parentAngularVelocity) + parentTransform.getRotation() * glm::dvec3(_angularVelocity);
     });
     return result;
 }
@@ -720,7 +720,7 @@ void SpatiallyNestable::setWorldAngularVelocity(const glm::vec3& angularVelocity
     glm::vec3 parentAngularVelocity = getParentAngularVelocity(success);
     Transform parentTransform = getParentTransform(success);
     _angularVelocityLock.withWriteLock([&] {
-        _angularVelocity = glm::inverse(parentTransform.getRotation()) * (angularVelocity - parentAngularVelocity);
+        _angularVelocity = glm::inverse(parentTransform.getRotation()) * glm::dvec3(angularVelocity - parentAngularVelocity);
     });
 }
 
@@ -910,7 +910,7 @@ void SpatiallyNestable::setLocalTransform(const Transform& transform) {
     }
 }
 
-glm::vec3 SpatiallyNestable::getLocalPosition() const {
+glm::dvec3 SpatiallyNestable::getLocalPosition() const {
     glm::vec3 result;
     _transformLock.withReadLock([&] {
         result = _transform.getTranslation();
@@ -918,7 +918,7 @@ glm::vec3 SpatiallyNestable::getLocalPosition() const {
     return result;
 }
 
-void SpatiallyNestable::setLocalPosition(const glm::vec3& position, bool tellPhysics) {
+void SpatiallyNestable::setLocalPosition(const glm::dvec3& position, bool tellPhysics) {
     // guard against introducing NaN into the transform
     if (isNaN(position)) {
         qCDebug(shared) << "SpatiallyNestable::setLocalPosition -- position contains NaN";
@@ -1049,7 +1049,7 @@ bool SpatiallyNestable::hasChildren() const {
 
 const Transform SpatiallyNestable::getAbsoluteJointTransformInObjectFrame(int jointIndex) const {
     Transform jointTransformInObjectFrame;
-    glm::vec3 position = getAbsoluteJointTranslationInObjectFrame(jointIndex);
+    glm::dvec3 position = getAbsoluteJointTranslationInObjectFrame(jointIndex);
     glm::quat orientation = getAbsoluteJointRotationInObjectFrame(jointIndex);
     glm::vec3 scale = getAbsoluteJointScaleInObjectFrame(jointIndex);
     jointTransformInObjectFrame.setScale(scale);

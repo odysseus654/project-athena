@@ -178,10 +178,10 @@ public:
     DEFINE_PROPERTY_REF(PROP_PRIVATE_USER_DATA, PrivateUserData, privateUserData, QString, ENTITY_ITEM_DEFAULT_PRIVATE_USER_DATA);
     DEFINE_PROPERTY_REF(PROP_HREF, Href, href, QString, "");
     DEFINE_PROPERTY_REF(PROP_DESCRIPTION, Description, description, QString, "");
-    DEFINE_PROPERTY_REF_WITH_SETTER(PROP_POSITION, Position, position, glm::vec3, ENTITY_ITEM_ZERO_VEC3);
-    DEFINE_PROPERTY_REF(PROP_DIMENSIONS, Dimensions, dimensions, glm::vec3, ENTITY_ITEM_DEFAULT_DIMENSIONS);
+    DEFINE_PROPERTY_REF_WITH_SETTER(PROP_POSITION, Position, position, glm::dvec3, ENTITY_ITEM_ZERO_DVEC3);
+    DEFINE_PROPERTY_REF(PROP_DIMENSIONS, Dimensions, dimensions, glm::dvec3, ENTITY_ITEM_DEFAULT_DIMENSIONS);
     DEFINE_PROPERTY_REF(PROP_ROTATION, Rotation, rotation, glm::quat, ENTITY_ITEM_DEFAULT_ROTATION);
-    DEFINE_PROPERTY_REF(PROP_REGISTRATION_POINT, RegistrationPoint, registrationPoint, glm::vec3, ENTITY_ITEM_DEFAULT_REGISTRATION_POINT);
+    DEFINE_PROPERTY_REF(PROP_REGISTRATION_POINT, RegistrationPoint, registrationPoint, glm::dvec3, ENTITY_ITEM_DEFAULT_REGISTRATION_POINT);
     DEFINE_PROPERTY(PROP_CREATED, Created, created, quint64, UNKNOWN_CREATED_TIME);
     DEFINE_PROPERTY_REF(PROP_LAST_EDITED_BY, LastEditedBy, lastEditedBy, QUuid, ENTITY_ITEM_DEFAULT_LAST_EDITED_BY);
     DEFINE_PROPERTY_REF_ENUM(PROP_ENTITY_HOST_TYPE, EntityHostType, entityHostType, entity::HostType, entity::HostType::DOMAIN);
@@ -239,11 +239,11 @@ public:
     DEFINE_PROPERTY_REF(PROP_STATIC_CERTIFICATE_VERSION, StaticCertificateVersion, staticCertificateVersion, quint32, ENTITY_ITEM_DEFAULT_STATIC_CERTIFICATE_VERSION);
 
     // these are used when bouncing location data into and out of scripts
-    DEFINE_PROPERTY_REF(PROP_LOCAL_POSITION, LocalPosition, localPosition, glm::vec3, ENTITY_ITEM_ZERO_VEC3);
+    DEFINE_PROPERTY_REF(PROP_LOCAL_POSITION, LocalPosition, localPosition, glm::dvec3, ENTITY_ITEM_ZERO_DVEC3);
     DEFINE_PROPERTY_REF(PROP_LOCAL_ROTATION, LocalRotation, localRotation, quat, ENTITY_ITEM_DEFAULT_ROTATION);
     DEFINE_PROPERTY_REF(PROP_LOCAL_VELOCITY, LocalVelocity, localVelocity, glm::vec3, ENTITY_ITEM_ZERO_VEC3);
     DEFINE_PROPERTY_REF(PROP_LOCAL_ANGULAR_VELOCITY, LocalAngularVelocity, localAngularVelocity, glm::vec3, ENTITY_ITEM_ZERO_VEC3);
-    DEFINE_PROPERTY_REF(PROP_LOCAL_DIMENSIONS, LocalDimensions, localDimensions, glm::vec3, ENTITY_ITEM_ZERO_VEC3);
+    DEFINE_PROPERTY_REF(PROP_LOCAL_DIMENSIONS, LocalDimensions, localDimensions, glm::dvec3, ENTITY_ITEM_ZERO_DVEC3);
 
     // Common
     DEFINE_PROPERTY_REF_ENUM(PROP_SHAPE_TYPE, ShapeType, shapeType, ShapeType, SHAPE_TYPE_NONE);
@@ -423,11 +423,11 @@ public:
     void clearID() { _id = UNKNOWN_ENTITY_ID; _idSet = false; }
     void markAllChanged();
 
-    const glm::vec3& getNaturalDimensions() const { return _naturalDimensions; }
-    void setNaturalDimensions(const glm::vec3& value) { _naturalDimensions = value; }
+    const glm::dvec3& getNaturalDimensions() const { return _naturalDimensions; }
+    void setNaturalDimensions(const glm::dvec3& value) { _naturalDimensions = value; }
     
-    const glm::vec3& getNaturalPosition() const { return _naturalPosition; }
-    void calculateNaturalPosition(const glm::vec3& min, const glm::vec3& max);
+    const glm::dvec3& getNaturalPosition() const { return _naturalPosition; }
+    void calculateNaturalPosition(const glm::dvec3& min, const glm::vec3& max);
     
     const QVariantMap& getTextureNames() const { return _textureNames; }
     void setTextureNames(const QVariantMap& value) { _textureNames = value; }
@@ -514,8 +514,8 @@ private:
     // NOTE: The following are pseudo client only properties. They are only used in clients which can access
     // properties of model geometry. But these properties are not serialized like other properties.
     QVariantMap _textureNames;
-    glm::vec3 _naturalDimensions;
-    glm::vec3 _naturalPosition;
+    glm::dvec3 _naturalDimensions;
+    glm::dvec3 _naturalPosition;
 
     size_t _renderInfoVertexCount { 0 };
     int _renderInfoTextureCount { 0 };
@@ -541,8 +541,8 @@ QScriptValue EntityPropertyInfoToScriptValue(QScriptEngine* engine, const Entity
 void EntityPropertyInfoFromScriptValue(const QScriptValue& object, EntityPropertyInfo& propertyInfo);
 
 // define these inline here so the macros work
-inline void EntityItemProperties::setPosition(const glm::vec3& value)
-                    { _position = glm::clamp(value, (float)-HALF_TREE_SCALE, (float)HALF_TREE_SCALE); _positionChanged = true; }
+inline void EntityItemProperties::setPosition(const glm::dvec3& value)
+                    { _position = glm::clamp(value, (double)-HALF_TREE_SCALE, (double)HALF_TREE_SCALE); _positionChanged = true; }
 
 inline void EntityItemProperties::setOwningAvatarID(const QUuid& id) {
     _owningAvatarID = id;

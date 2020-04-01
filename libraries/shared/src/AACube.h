@@ -37,17 +37,17 @@ public:
     glm::vec3 getFarthestVertex(const glm::vec3& normal) const; // return vertex most parallel to normal
     glm::vec3 getNearestVertex(const glm::vec3& normal) const; // return vertex most anti-parallel to normal
     void scale(float scale);
-    const glm::vec3& getCorner() const { return _corner; }
+    const glm::dvec3& getCorner() const { return _corner; }
     float getScale() const { return _scale; }
-    glm::vec3 getDimensions() const { return glm::vec3(_scale,_scale,_scale); }
+    glm::dvec3 getDimensions() const { return glm::dvec3(_scale,_scale,_scale); }
     float getLargestDimension() const { return _scale; }
 
-    glm::vec3 calcCenter() const;
-    glm::vec3 calcTopFarLeft() const;
-    glm::vec3 getVertex(BoxVertex vertex) const;
+    glm::dvec3 calcCenter() const;
+    glm::dvec3 calcTopFarLeft() const;
+    glm::dvec3 getVertex(BoxVertex vertex) const;
 
     const glm::vec3& getMinimumPoint() const { return _corner; }
-    glm::vec3 getMaximumPoint() const { return calcTopFarLeft(); }
+    glm::dvec3 getMaximumPoint() const { return calcTopFarLeft(); }
 
     bool contains(const glm::vec3& point) const;
     bool contains(const AACube& otherCube) const;
@@ -78,7 +78,7 @@ private:
 
     static BoxFace getOppositeFace(BoxFace face);
 
-    glm::vec3 _corner;
+    glm::dvec3 _corner;
     float _scale;
 };
 

@@ -327,8 +327,8 @@ bool isPointBehindTrianglesPlane(glm::vec3 point, glm::vec3 p0, glm::vec3 p1, gl
     return (glm::dot(n, point) + d) >= 0;
 }
 
-glm::vec3 extractTranslation(const glm::mat4& matrix) {
-    return glm::vec3(matrix[3][0], matrix[3][1], matrix[3][2]);
+glm::dvec3 extractTranslation(const glm::dmat4& matrix) {
+    return glm::dvec3(matrix[3][0], matrix[3][1], matrix[3][2]);
 }
 
 void setTranslation(glm::mat4& matrix, const glm::vec3& translation) {

@@ -88,17 +88,17 @@ public:
 
     virtual Transform getParentTransform(bool& success, int depth = 0) const;
 
-    void setWorldTransform(const glm::vec3& position, const glm::quat& orientation);
+    void setWorldTransform(const glm::dvec3& position, const glm::dquat& orientation);
     virtual glm::vec3 getWorldPosition(bool& success) const;
     virtual glm::vec3 getWorldPosition() const;
-    virtual void setWorldPosition(const glm::vec3& position, bool& success, bool tellPhysics = true);
-    virtual void setWorldPosition(const glm::vec3& position);
+    virtual void setWorldPosition(const glm::dvec3& position, bool& success, bool tellPhysics = true);
+    virtual void setWorldPosition(const glm::dvec3& position);
 
     virtual glm::quat getWorldOrientation(bool& success) const;
     virtual glm::quat getWorldOrientation() const;
     virtual glm::quat getWorldOrientation(int jointIndex, bool& success) const;
-    virtual void setWorldOrientation(const glm::quat& orientation, bool& success, bool tellPhysics = true);
-    virtual void setWorldOrientation(const glm::quat& orientation);
+    virtual void setWorldOrientation(const glm::dquat& orientation, bool& success, bool tellPhysics = true);
+    virtual void setWorldOrientation(const glm::dquat& orientation);
 
     virtual glm::vec3 getWorldVelocity(bool& success) const;
     virtual glm::vec3 getWorldVelocity() const;
@@ -130,15 +130,15 @@ public:
 
     // get world-frame values for a specific joint
     virtual const Transform getJointTransform(int jointIndex, bool& success, int depth = 0) const;
-    virtual glm::vec3 getJointWorldPosition(int jointIndex, bool& success) const;
+    virtual glm::dvec3 getJointWorldPosition(int jointIndex, bool& success) const;
     virtual glm::vec3 getJointSNScale(int jointIndex, bool& success) const;
 
     // object's parent's frame
     virtual Transform getLocalTransform() const;
     virtual void setLocalTransform(const Transform& transform);
 
-    virtual glm::vec3 getLocalPosition() const;
-    virtual void setLocalPosition(const glm::vec3& position, bool tellPhysics = true);
+    virtual glm::dvec3 getLocalPosition() const;
+    virtual void setLocalPosition(const glm::dvec3& position, bool tellPhysics = true);
 
     virtual glm::quat getLocalOrientation() const;
     virtual void setLocalOrientation(const glm::quat& orientation);

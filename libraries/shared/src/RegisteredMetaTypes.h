@@ -407,7 +407,7 @@ public:
                     transform.setScale(vec3FromVariant(shape["dimensions"]));
                 }
 
-                shapeInfo->setParams(shapeType, transform.getScale() / 2.0f, modelURL.toString());
+                shapeInfo->setParams(shapeType, transform.getScale() / 2.0, modelURL.toString());
             }
         }
 

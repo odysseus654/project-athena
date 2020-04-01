@@ -18,7 +18,7 @@
 
 class Plane;
 
-glm::vec3 computeVectorFromPointToSegment(const glm::vec3& point, const glm::vec3& start, const glm::vec3& end);
+glm::dvec3 computeVectorFromPointToSegment(const glm::dvec3& point, const glm::dvec3& start, const glm::dvec3& end);
 
 /// Computes the penetration between a point and a sphere (centered at the origin)
 /// \param point the point location relative to sphere center (origin)
@@ -26,8 +26,8 @@ glm::vec3 computeVectorFromPointToSegment(const glm::vec3& point, const glm::vec
 /// \param sphereRadius the radius of the sphere
 /// \param penetration[out] the displacement that would move the point out of penetration with the sphere
 /// \return true if point is inside sphere, otherwise false
-bool findSpherePenetration(const glm::vec3& point, const glm::vec3& defaultDirection,
-                           float sphereRadius, glm::vec3& penetration);
+bool findSpherePenetration(const glm::dvec3& point, const glm::vec3& defaultDirection,
+                           double sphereRadius, glm::vec3& penetration);
 
 bool findSpherePointPenetration(const glm::vec3& sphereCenter, float sphereRadius,
                                 const glm::vec3& point, glm::vec3& penetration);
@@ -76,8 +76,8 @@ glm::vec3 addPenetrations(const glm::vec3& currentPenetration, const glm::vec3& 
 
 bool findIntersection(float origin, float direction, float corner, float size, float& distance);
 bool findInsideOutIntersection(float origin, float direction, float corner, float size, float& distance);
-bool findRayAABoxIntersection(const glm::vec3& origin, const glm::vec3& direction, const glm::vec3& invDirection,
-                              const glm::vec3& corner, const glm::vec3& scale, float& distance, BoxFace& face, glm::vec3& surfaceNormal);
+bool findRayAABoxIntersection(const glm::dvec3& origin, const glm::vec3& direction, const glm::vec3& invDirection,
+                              const glm::dvec3& corner, const glm::vec3& scale, double& distance, BoxFace& face, glm::vec3& surfaceNormal);
 
 bool findRaySphereIntersection(const glm::vec3& origin, const glm::vec3& direction,
     const glm::vec3& center, float radius, float& distance);
@@ -106,8 +106,8 @@ bool findParabolaTriangleIntersection(const glm::vec3& origin, const glm::vec3& 
 bool findParabolaCapsuleIntersection(const glm::vec3& origin, const glm::vec3& velocity, const glm::vec3& acceleration,
     const glm::vec3& start, const glm::vec3& end, float radius, const glm::quat& rotation, float& parabolicDistance);
 
-bool findParabolaAABoxIntersection(const glm::vec3& origin, const glm::vec3& velocity, const glm::vec3& acceleration,
-    const glm::vec3& corner, const glm::vec3& scale, float& parabolicDistance, BoxFace& face, glm::vec3& surfaceNormal);
+bool findParabolaAABoxIntersection(const glm::dvec3& origin, const glm::vec3& velocity, const glm::vec3& acceleration,
+    const glm::dvec3& corner, const glm::vec3& scale, double& parabolicDistance, BoxFace& face, glm::vec3& surfaceNormal);
 
 /// \brief decomposes rotation into its components such that: rotation = swing * twist
 /// \param rotation[in] rotation to decompose
@@ -128,12 +128,12 @@ void swingTwistDecomposition(const glm::quat& rotation,
  */
 class Triangle {
 public:
-    glm::vec3 v0;
-    glm::vec3 v1;
-    glm::vec3 v2;
-    glm::vec3 getNormal() const;
-    float getArea() const;
-    Triangle operator*(const glm::mat4& transform) const;
+    glm::dvec3 v0;
+    glm::dvec3 v1;
+    glm::dvec3 v2;
+    glm::dvec3 getNormal() const;
+    double getArea() const;
+    Triangle operator*(const glm::dmat4& transform) const;
 };
 
 inline bool findRayTriangleIntersection(const glm::vec3& origin, const glm::vec3& direction,
@@ -220,7 +220,7 @@ bool solve_quartic(float a, float b, float c, float d, glm::vec4& roots);
 bool computeRealQuarticRoots(float a, float b, float c, float d, float e, glm::vec4& roots);
 
 bool isWithin(float value, float corner, float size);
-bool aaBoxContains(const glm::vec3& point, const glm::vec3& corner, const glm::vec3& scale);
+bool aaBoxContains(const glm::dvec3& point, const glm::dvec3& corner, const glm::vec3& scale);
 
 void checkPossibleParabolicIntersectionWithZPlane(float t, float& minDistance,
     const glm::vec3& origin, const glm::vec3& velocity, const glm::vec3& acceleration, const glm::vec2& corner, const glm::vec2& scale);

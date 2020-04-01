@@ -20,9 +20,11 @@
 
 // There is a minor performance gain when comparing/copying an existing glm::vec3 rather than
 // creating a new one on the stack so we declare the ZERO_VEC3 constant as an optimization.
+const glm::dvec3 ENTITY_ITEM_ZERO_DVEC3 = glm::dvec3(0.0);
 const glm::vec3 ENTITY_ITEM_ZERO_VEC3 = glm::vec3(0.0f);
 const glm::vec3 ENTITY_ITEM_ONE_VEC3 = glm::vec3(1.0f);
 const glm::vec3 ENTITY_ITEM_HALF_VEC3 = glm::vec3(0.5f);
+const glm::dvec3 ENTITY_ITEM_HALF_DVEC3 = glm::dvec3(0.5);
 
 const QVector<glm::vec3> ENTITY_ITEM_DEFAULT_EMPTY_VEC3_QVEC = QVector<glm::vec3>();
 
@@ -58,16 +60,16 @@ const QString ENTITY_ITEM_DEFAULT_COLLISION_SOUND_URL = QString("");
 
 const float ENTITY_ITEM_MIN_REGISTRATION_POINT = 0.0f;
 const float ENTITY_ITEM_MAX_REGISTRATION_POINT = 1.0f;
-const glm::vec3 ENTITY_ITEM_DEFAULT_REGISTRATION_POINT = ENTITY_ITEM_HALF_VEC3; // center
+const glm::dvec3 ENTITY_ITEM_DEFAULT_REGISTRATION_POINT = ENTITY_ITEM_HALF_DVEC3; // center
 
 const float ENTITY_ITEM_IMMORTAL_LIFETIME = -1.0f; /// special lifetime which means the entity lives for ever
 const float ENTITY_ITEM_DEFAULT_LIFETIME = ENTITY_ITEM_IMMORTAL_LIFETIME;
 
-const glm::vec3 ENTITY_ITEM_DEFAULT_POSITION = ENTITY_ITEM_ZERO_VEC3;
+const glm::dvec3 ENTITY_ITEM_DEFAULT_POSITION = ENTITY_ITEM_ZERO_DVEC3;
 const glm::quat ENTITY_ITEM_DEFAULT_ROTATION;
 const float ENTITY_ITEM_DEFAULT_WIDTH = 0.1f;
 const float ENTITY_ITEM_MIN_DIMENSION = 0.001f;
-const glm::vec3 ENTITY_ITEM_DEFAULT_DIMENSIONS = glm::vec3(ENTITY_ITEM_DEFAULT_WIDTH);
+const glm::dvec3 ENTITY_ITEM_DEFAULT_DIMENSIONS = glm::dvec3(ENTITY_ITEM_DEFAULT_WIDTH);
 const float ENTITY_ITEM_DEFAULT_VOLUME = ENTITY_ITEM_DEFAULT_WIDTH * ENTITY_ITEM_DEFAULT_WIDTH * ENTITY_ITEM_DEFAULT_WIDTH;
 const float ENTITY_ITEM_MIN_VOLUME = ENTITY_ITEM_MIN_DIMENSION * ENTITY_ITEM_MIN_DIMENSION * ENTITY_ITEM_MIN_DIMENSION;
 
