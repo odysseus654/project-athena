@@ -20,6 +20,7 @@
 #include "entities/EntityServer.h"
 #include "messages/MessagesMixer.h"
 #include "scripts/EntityScriptServer.h"
+#include "metamesh/MetaMesh.h"
 
 ThreadedAssignment* AssignmentFactory::unpackAssignment(ReceivedMessage& message) {
 
@@ -45,6 +46,8 @@ ThreadedAssignment* AssignmentFactory::unpackAssignment(ReceivedMessage& message
             return new MessagesMixer(message);
         case Assignment::EntityScriptServerType:
             return new EntityScriptServer(message);
+        case Assignment::MetaMeshType:
+            return new MetaMeshProxy(message);
         default:
             return nullptr;
     }

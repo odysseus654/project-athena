@@ -37,6 +37,8 @@ Assignment::Type Assignment::typeForNodeType(NodeType_t nodeType) {
             return Assignment::MessagesMixerType;
         case NodeType::EntityScriptServer:
             return Assignment::EntityScriptServerType;
+        case NodeType::MetaMesh:
+            return Assignment::MetaMeshType;
         default:
             return Assignment::AllTypes;
     }

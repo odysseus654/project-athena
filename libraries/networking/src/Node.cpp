@@ -42,7 +42,8 @@ static const QHash<NodeType_t, QString> TYPE_NAME_HASH {
     { NodeType::UpstreamAvatarMixer, "Upstream Avatar Mixer" },
     { NodeType::DownstreamAudioMixer, "Downstream Audio Mixer" },
     { NodeType::DownstreamAvatarMixer, "Downstream Avatar Mixer" },
-    { NodeType::Unassigned, "Unassigned" }
+    { NodeType::MetaMesh, "Metaverse Mesh Node"},
+    { NodeType::Unassigned, "Unassigned" },
 };
 
 const QString& NodeType::getNodeTypeName(NodeType_t nodeType) {
