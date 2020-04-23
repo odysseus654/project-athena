@@ -11,7 +11,11 @@
 
 #include "MetaMesh.h"
 
-const QString METAMESH_LOGGING_NAME = "metamesh-node";
+#include <PathUtils.h>
+
+Q_LOGGING_CATEGORY(metamesh_node, "vircadia.metamesh-node")
+const static QString METAMESH_LOGGING_NAME = "metamesh-node";
+const static QStringList METAMESH_ARGUMENTS = QStringList() << QString("node");
 
 MetaMeshProxy::MetaMeshProxy(ReceivedMessage& message) : ThreadedAssignment(message) {
     connect(DependencyManager::get<NodeList>().data(), &NodeList::nodeKilled, this, &MetaMeshProxy::nodeKilled);
@@ -35,16 +39,39 @@ void MetaMeshProxy::createMeshNode() {
     _meshNode = new QProcess(this);
     connect(_meshNode, &QProcess::readyReadStandardOutput, this, &MetaMeshProxy::childStdoutReady);
     connect(_meshNode, &QProcess::started, this, &MetaMeshProxy::childStarted);
+    connect(_meshNode, &QProcess::errorOccurred, this, &MetaMeshProxy::childErrorOccurred);
     connect(_meshNode, &QProcess::readyReadStandardOutput, this, &MetaMeshProxy::childStdoutReady);
     connect(_meshNode, &QProcess::readyReadStandardError, this, &MetaMeshProxy::childStderrReady);
 }
 
 void MetaMeshProxy::run() {
     ThreadedAssignment::commonInit(METAMESH_LOGGING_NAME, NodeType::MetaMesh);
+
     createMeshNode();
 
-    //    auto nodeList = DependencyManager::get<NodeList>();
-//    nodeList->addSetOfNodeTypesToNodeInterestSet({ NodeType::Agent, NodeType::EntityScriptServer });
+    auto meshDir = QDir(PathUtils::getAppDataFilePath("mesh/"));
+    if (!meshDir.mkpath(".")) {
+        qCCritical(metamesh_node) << "Unable to create file directory for mesh files. Stopping assignment.";
+        setFinished(true);
+        return;
+    }
+    _meshNode->setWorkingDirectory(meshDir.absolutePath());
+
+    auto meshApp = QFileInfo(QCoreApplication::applicationDirPath() + "/metamesh.exe");
+    if (!meshApp.exists() || !meshApp.isExecutable()) {
+        qCCritical(metamesh_node) << "Cannot locate metamesh.exe as an execution target. Stopping assignment.";
+        setFinished(true);
+        return;
+    }
+
+    _meshNode->start(meshApp.absoluteFilePath(), METAMESH_ARGUMENTS);
+    // returning waiting for either childStarted or childErrorOccurred to fire
+}
+
+void MetaMeshProxy::childErrorOccurred(QProcess::ProcessError error) {
+    auto metaEnum = QMetaEnum::fromType<QProcess::ProcessError>();
+    qCCritical(metamesh_node) << "Failed to launch metamesh.exe (got error " << metaEnum.valueToKey(error) << "). Stopping assignment.";
+    setFinished(true);
 }
 
 void MetaMeshProxy::childStarted() {

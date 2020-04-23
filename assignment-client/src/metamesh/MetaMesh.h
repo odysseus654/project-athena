@@ -15,6 +15,7 @@
 #ifndef hifi_MetaMesh_h
 #define hifi_MetaMesh_h
 
+#include <QLoggingCategory>
 #include <ThreadedAssignment.h>
 
 /// Handles assignments of type MessagesMixer - management of external mesh node
@@ -30,6 +31,7 @@ public slots:
 
 private slots:
     void childExited(int exitCode, QProcess::ExitStatus exitStatus);
+    void childErrorOccurred(QProcess::ProcessError error);
     void childStarted();
     void childStdoutReady();
     void childStderrReady();
@@ -44,5 +46,7 @@ private:
 //    QHash<QString, QSet<QUuid>> _channelSubscribers;
     QProcess* _meshNode = nullptr;
 };
+
+Q_DECLARE_LOGGING_CATEGORY(metamesh_node)
 
 #endif  // hifi_MetaMesh_h
