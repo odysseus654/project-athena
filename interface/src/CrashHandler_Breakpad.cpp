@@ -57,7 +57,7 @@ void flushAnnotations() {
     settings.sync();
 }
 
-bool startCrashHandler(std::string appPath) {
+bool startCrashHandler(const QString& appPath) {
     annotations["version"] = BuildInfo::VERSION;
     annotations["build_number"] = BuildInfo::BUILD_NUMBER;
     annotations["build_type"] = BuildInfo::BUILD_TYPE_STRING;
@@ -73,12 +73,13 @@ bool startCrashHandler(std::string appPath) {
     return true;
 }
 
-void setCrashAnnotation(std::string name, std::string value) {
+void setCrashAnnotation(const QString& qName, const QString& qValue) {
     std::lock_guard<std::mutex> guard(annotationMutex);
-    QString qName = QString::fromStdString(name);
-    QString qValue = QString::fromStdString(value);
-    annotations[qName] = qValue;
+    annotations[qName.toStdString()] = qValue.toStdString();
     flushAnnotations();
+}
+
+void logMessageForCrashes(QtMsgType type, const QMessageLogContext& context, const QString& message) {
 }
 
 #endif

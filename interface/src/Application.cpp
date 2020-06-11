@@ -408,7 +408,7 @@ public:
     }
 
     void deadlockDetectionCrash() {
-        setCrashAnnotation("_mod_faulting_tid", std::to_string((uint64_t)_mainThreadID));
+        setCrashAnnotation("_mod_faulting_tid", QString::number((uint64_t)_mainThreadID));
         setCrashAnnotation("deadlock", "1");
         uint32_t* crashTrigger = nullptr;
         *crashTrigger = 0xDEAD10CC;
@@ -578,6 +578,9 @@ public:
 
 void messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& message) {
     QString logMessage = LogHandler::getInstance().printMessage((LogMsgType) type, context, message);
+
+    // record this message in case we need to send a crash file
+    logMessageForCrashes(type, context, message);
 
     if (!logMessage.isEmpty()) {
 #ifdef Q_OS_ANDROID
@@ -1092,9 +1095,9 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
     {
         // identify gpu as early as possible to help identify OpenGL initialization errors.
         auto gpuIdent = GPUIdent::getInstance();
-        setCrashAnnotation("sentry[contexts][gpu][name]", gpuIdent->getName().toStdString());
-        setCrashAnnotation("sentry[contexts][gpu][version]", gpuIdent->getDriver().toStdString());
-        setCrashAnnotation("gpu_memory", std::to_string(gpuIdent->getMemory()));
+        setCrashAnnotation("sentry[contexts][gpu][name]", gpuIdent->getName());
+        setCrashAnnotation("sentry[contexts][gpu][version]", gpuIdent->getDriver());
+        setCrashAnnotation("gpu_memory", QString::number(gpuIdent->getMemory()));
     }
 
     // make sure the debug draw singleton is initialized on the main thread.
@@ -1206,8 +1209,8 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
     _logger->setSessionID(accountManager->getSessionID());
 #endif
 
-    setCrashAnnotation("metaverse_session_id", accountManager->getSessionID().toString().toStdString());
-    setCrashAnnotation("main_thread_id", std::to_string((size_t)QThread::currentThreadId()));
+    setCrashAnnotation("metaverse_session_id", accountManager->getSessionID().toString());
+    setCrashAnnotation("main_thread_id", QString::number((size_t)QThread::currentThreadId()));
 
     if (steamClient) {
         qCDebug(interfaceapp) << "[VERSION] SteamVR buildID:" << steamClient->getSteamVRBuildID();
@@ -1280,7 +1283,7 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
     connect(&domainHandler, SIGNAL(domainURLChanged(QUrl)), SLOT(domainURLChanged(QUrl)));
     connect(&domainHandler, SIGNAL(redirectToErrorDomainURL(QUrl)), SLOT(goToErrorDomainURL(QUrl)));
     connect(&domainHandler, &DomainHandler::domainURLChanged, [](QUrl domainURL){
-        setCrashAnnotation("domain", domainURL.toString().toStdString());
+        setCrashAnnotation("domain", domainURL.toString());
     });
     connect(&domainHandler, SIGNAL(resetting()), SLOT(resettingDomain()));
     connect(&domainHandler, SIGNAL(connectedToDomain(QUrl)), SLOT(updateWindowTitle()));
@@ -1381,7 +1384,7 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
             setPreferredCursor(Cursor::Manager::getIconName(Cursor::Icon::SYSTEM));
         }
 
-        setCrashAnnotation("display_plugin", displayPlugin->getName().toStdString());
+        setCrashAnnotation("display_plugin", displayPlugin->getName());
         setCrashAnnotation("hmd", displayPlugin->isHmd() ? "1" : "0");
     });
     connect(this, &Application::activeDisplayPluginChanged, this, &Application::updateSystemTabletMode);
@@ -1420,7 +1423,7 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
 
     connect(myAvatar.get(), &MyAvatar::skeletonModelURLChanged, [](){
         QUrl avatarURL = qApp->getMyAvatar()->getSkeletonModelURL();
-        setCrashAnnotation("avatar", avatarURL.toString().toStdString());
+        setCrashAnnotation("avatar", avatarURL.toString());
     });
 
     // Inititalize sample before registering
@@ -7074,7 +7077,7 @@ void Application::updateWindowTitle() const {
         nodeList->getDomainHandler().isConnected() ? "" : " (NOT CONNECTED)";
     QString username = accountManager->getAccountInfo().getUsername();
 
-    setCrashAnnotation("sentry[user][username]", username.toStdString());
+    setCrashAnnotation("sentry[user][username]", username);
 
     QString currentPlaceName;
     if (isServerlessMode()) {

@@ -17,12 +17,15 @@
 
 #include <QDebug>
 
-bool startCrashHandler(std::string appPath) {
+bool startCrashHandler(const QString& appPath) {
     qDebug() << "No crash handler available.";
     return false;
 }
 
-void setCrashAnnotation(std::string name, std::string value) {
+void setCrashAnnotation(const QString& name, const QString& value) {
+}
+
+void logMessageForCrashes(QtMsgType type, const QMessageLogContext& context, const QString& message) {
 }
 
 #endif

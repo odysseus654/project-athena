@@ -29,7 +29,7 @@ RenderEventHandler::RenderEventHandler(CheckCall checkCall, RenderCall renderCal
 void RenderEventHandler::initialize() {
     setObjectName("Render");
     PROFILE_SET_THREAD_NAME("Render");
-    setCrashAnnotation("render_thread_id", std::to_string((size_t)QThread::currentThreadId()));
+    setCrashAnnotation("render_thread_id", QString::number((size_t)QThread::currentThreadId()));
 }
 
 void RenderEventHandler::resumeThread() {

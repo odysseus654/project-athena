@@ -12,9 +12,12 @@
 #ifndef hifi_CrashHandler_h
 #define hifi_CrashHandler_h
 
-#include <string>
+class QMessageLogContext;
+class QString;
+enum QtMsgType;
 
-bool startCrashHandler(std::string appPath);
-void setCrashAnnotation(std::string name, std::string value);
+bool startCrashHandler(const QString& appPath);
+void setCrashAnnotation(const QString& name, const QString& value);
+void logMessageForCrashes(QtMsgType type, const QMessageLogContext& context, const QString& message);
 
 #endif // hifi_CrashHandler_h

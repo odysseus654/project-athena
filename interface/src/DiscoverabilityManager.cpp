@@ -133,7 +133,7 @@ void DiscoverabilityManager::updateLocation() {
     if (auto steamClient = PluginManager::getInstance()->getSteamClientPlugin()) {
         steamClient->updateLocation(domainHandler.getHostname(), currentAddress);
     }
-    setCrashAnnotation("address", currentAddress.toString().toStdString());
+    setCrashAnnotation("address", currentAddress.toString());
 }
 
 void DiscoverabilityManager::handleHeartbeatResponse(QNetworkReply* requestReply) {
