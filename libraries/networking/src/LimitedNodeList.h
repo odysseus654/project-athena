@@ -43,7 +43,7 @@
 #include "PacketReceiver.h"
 #include "ReceivedMessage.h"
 #include "udt/ControlPacket.h"
-#include "udt/PacketHeaders.h"
+#include "PacketHeaders.h"
 #include "udt/Socket.h"
 #include "UUIDHasher.h"
 

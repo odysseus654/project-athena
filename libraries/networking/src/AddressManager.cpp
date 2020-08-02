@@ -28,7 +28,7 @@
 #include "NodeList.h"
 #include "NetworkLogging.h"
 #include "UserActivityLogger.h"
-#include "udt/PacketHeaders.h"
+#include "PacketHeaders.h"
 
 const QString DEFAULT_HIFI_ADDRESS = "file:///~/serverless/tutorial.json";
 const QString DEFAULT_HOME_ADDRESS = "file:///~/serverless/tutorial.json";

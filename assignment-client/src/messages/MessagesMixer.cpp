@@ -17,7 +17,7 @@
 #include <LogHandler.h>
 #include <MessagesClient.h>
 #include <NodeList.h>
-#include <udt/PacketHeaders.h>
+#include <PacketHeaders.h>
 
 const QString MESSAGES_MIXER_LOGGING_NAME = "messages-mixer";
 

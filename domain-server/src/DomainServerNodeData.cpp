@@ -17,7 +17,7 @@
 #include <QtCore/QJsonObject>
 #include <QtCore/QVariant>
 
-#include <udt/PacketHeaders.h>
+#include <PacketHeaders.h>
 
 DomainServerNodeData::StringPairHash DomainServerNodeData::_overrideHash;
 

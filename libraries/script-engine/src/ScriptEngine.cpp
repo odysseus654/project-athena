@@ -52,7 +52,7 @@
 #include <UserActivityLoggerScriptingInterface.h>
 #include <NodeList.h>
 #include <ScriptAvatarData.h>
-#include <udt/PacketHeaders.h>
+#include <PacketHeaders.h>
 #include <UUID.h>
 
 #include <controllers/ScriptingInterface.h>

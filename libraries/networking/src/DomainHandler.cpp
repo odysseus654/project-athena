@@ -27,7 +27,7 @@
 #include "HifiSockAddr.h"
 #include "NodeList.h"
 #include "udt/Packet.h"
-#include "udt/PacketHeaders.h"
+#include "PacketHeaders.h"
 #include "NLPacket.h"
 #include "SharedUtil.h"
 #include "UserActivityLogger.h"

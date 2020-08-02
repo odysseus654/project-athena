@@ -15,6 +15,7 @@
 #include "udt/PacketList.h"
 
 #include "NLPacket.h"
+#include "PacketHeaders.h"
 
 class NLPacketList : public udt::PacketList {
 public:

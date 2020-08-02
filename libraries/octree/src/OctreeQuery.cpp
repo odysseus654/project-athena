@@ -16,7 +16,7 @@
 #include <QtCore/QJsonDocument>
 
 #include <GLMHelpers.h>
-#include <udt/PacketHeaders.h>
+#include <PacketHeaders.h>
 
 OctreeQuery::OctreeQuery(bool randomizeConnectionID) {
     if (randomizeConnectionID) {
