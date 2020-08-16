@@ -14,7 +14,7 @@
 #include <QDebug>
 
 #include <BufferParser.h>
-#include <udt/PacketHeaders.h>
+#include <PacketHeaders.h>
 #include <UUID.h>
 
 #include "RegisteredMetaTypes.h"
