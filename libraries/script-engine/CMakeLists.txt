@@ -2,6 +2,7 @@ set(TARGET_NAME script-engine)
 # FIXME Move undo scripting interface to application and remove Widgets
 setup_hifi_library(Gui Network Script ScriptTools WebSockets Widgets)
 
+target_v8()
 target_zlib()
 if (NOT ANDROID)
   target_quazip()
